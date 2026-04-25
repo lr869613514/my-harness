@@ -1,0 +1,24 @@
+stack_id: java8-spring2-gradle
+language: java
+language_version: "8"
+framework: spring-boot
+framework_version: "2.7.x"
+build_tool: gradle
+dependency_files: ["build.gradle", "settings.gradle"]
+commands:
+  bdd_dry_run: "./gradlew cucumber -Pcucumber.options='--dry-run'"
+  bdd_run: "./gradlew cucumber"
+  unit_test: "./gradlew test"
+  static_analysis: "./gradlew check"               # PMD, Checkstyle, SpotBugs 等需在 build.gradle 中配置
+  security_scan: "./gradlew dependencyCheckAnalyze"
+  coverage_check: "./gradlew jacocoTestCoverageVerification"
+  contract_test: "./gradlew contractTest"           # 需在 build.gradle 中配置契约测试任务
+  resilience_test: "./gradlew resilienceTest"       # 需在 build.gradle 中配置韧性测试任务
+  build: "./gradlew clean build"
+plugins:
+  pmd: true
+  checkstyle: true
+  spotbugs: true
+  dependency-check: "org.owasp:dependency-check-gradle:8.4.0"
+  jacoco: true
+  cucumber: "io.cucumber:cucumber-java:7.14.0"

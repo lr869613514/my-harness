@@ -1,0 +1,161 @@
+===== Harness Behavioral Verification Gates =====
+时间: 2026-04-25 17:00:34
+
+── G1: 单元测试 ──
+[G1] Running: ./gradlew test
+Configuration on demand is an incubating feature.
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :compileTestJava UP-TO-DATE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+
+> Task :test
+
+ThirdTest > testMybatisInsert FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:98
+        Caused by: org.springframework.beans.factory.BeanCreationException at CommonAnnotationBeanPostProcessor.java:332
+            Caused by: org.springframework.beans.factory.BeanCreationException at CommonAnnotationBeanPostProcessor.java:332
+                Caused by: org.springframework.beans.factory.BeanCreationException at CommonAnnotationBeanPostProcessor.java:332
+                    Caused by: org.springframework.beans.factory.BeanCreationException at CommonAnnotationBeanPostProcessor.java:332
+                        Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException at AutowiredAnnotationBeanPostProcessor.java:713
+                            Caused by: org.springframework.beans.factory.BeanCreationException at CommonAnnotationBeanPostProcessor.java:332
+                                Caused by: org.springframework.beans.factory.BeanCreationException at CommonAnnotationBeanPostProcessor.java:332
+                                    Caused by: org.springframework.beans.factory.BeanCreationException at ConstructorResolver.java:653
+                                        Caused by: org.springframework.beans.BeanInstantiationException at SimpleInstantiationStrategy.java:185
+                                            Caused by: java.lang.IllegalStateException at PayRocketMqTemplateConfig.java:22
+
+1 test completed, 1 failed
+
+> Task :test FAILED
+> Task :jacocoTestReport
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':test'.
+> There were failing tests. See the report at: file:///Users/lr/IdeaProjects/payadmin-harness/payadmin/build/reports/tests/test/index.html
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+
+* Get more help at https://help.gradle.org
+
+BUILD FAILED in 18s
+5 actionable tasks: 2 executed, 3 up-to-date
+[G1] ❌ FAILED
+── G2: 契约测试 ──
+[G2] Running: ./gradlew contractTest
+Configuration on demand is an incubating feature.
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :compileContractTestJava NO-SOURCE
+> Task :processContractTestResources NO-SOURCE
+> Task :contractTestClasses UP-TO-DATE
+> Task :contractTest NO-SOURCE
+
+BUILD SUCCESSFUL in 1s
+2 actionable tasks: 2 up-to-date
+[G2] ❌ BLOCKED: Gradle task was skipped or had no source
+── G3: BDD 验收测试 ──
+[G3] Running: ./gradlew cucumber
+Configuration on demand is an incubating feature.
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :compileTestJava UP-TO-DATE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :cucumber FAILED
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Build file '/Users/lr/IdeaProjects/payadmin-harness/payadmin/build.gradle' line: 273
+
+* What went wrong:
+Execution failed for task ':cucumber'.
+> No Cucumber feature files found in .harness/docs/features. PHASE_2_BDD must create real acceptance scenarios before verification.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+
+* Get more help at https://help.gradle.org
+
+BUILD FAILED in 1s
+4 actionable tasks: 1 executed, 3 up-to-date
+[G3] ❌ FAILED
+── G4: 韧性测试 ──
+[G4] Running: ./gradlew resilienceTest
+Configuration on demand is an incubating feature.
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :compileResilienceTestJava NO-SOURCE
+> Task :processResilienceTestResources NO-SOURCE
+> Task :resilienceTestClasses UP-TO-DATE
+> Task :resilienceTest NO-SOURCE
+
+BUILD SUCCESSFUL in 1s
+2 actionable tasks: 2 up-to-date
+[G4] ❌ BLOCKED: Gradle task was skipped or had no source
+── G5: 覆盖率检查 (≥80%) ──
+[G5] Running: ./gradlew jacocoTestCoverageVerification
+Configuration on demand is an incubating feature.
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :compileTestJava UP-TO-DATE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+
+> Task :test
+
+ThirdTest > testMybatisInsert FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:98
+        Caused by: org.springframework.beans.factory.BeanCreationException at CommonAnnotationBeanPostProcessor.java:332
+            Caused by: org.springframework.beans.factory.BeanCreationException at CommonAnnotationBeanPostProcessor.java:332
+                Caused by: org.springframework.beans.factory.BeanCreationException at CommonAnnotationBeanPostProcessor.java:332
+                    Caused by: org.springframework.beans.factory.BeanCreationException at CommonAnnotationBeanPostProcessor.java:332
+                        Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException at AutowiredAnnotationBeanPostProcessor.java:713
+                            Caused by: org.springframework.beans.factory.BeanCreationException at CommonAnnotationBeanPostProcessor.java:332
+                                Caused by: org.springframework.beans.factory.BeanCreationException at CommonAnnotationBeanPostProcessor.java:332
+                                    Caused by: org.springframework.beans.factory.BeanCreationException at ConstructorResolver.java:653
+                                        Caused by: org.springframework.beans.BeanInstantiationException at SimpleInstantiationStrategy.java:185
+                                            Caused by: java.lang.IllegalStateException at PayRocketMqTemplateConfig.java:22
+
+1 test completed, 1 failed
+
+> Task :test FAILED
+> Task :jacocoTestReport
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':test'.
+> There were failing tests. See the report at: file:///Users/lr/IdeaProjects/payadmin-harness/payadmin/build/reports/tests/test/index.html
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+
+* Get more help at https://help.gradle.org
+
+BUILD FAILED in 17s
+5 actionable tasks: 2 executed, 3 up-to-date
+[G5] ❌ FAILED
+
+===== Verification Result =====
+BLOCKED (task未配置): 2
+FAILED  (执行失败):   3
+
+❌ 验证被阻断：2 个 Gradle task 未配置、被跳过或缺少有效证据。
+   必须先完成 Gradle 配置和真实测试证据，再运行 make verify。
+   参考 .harness/core/02-tech-stacks/java8-spring2.yaml 中的 plugins 清单。

@@ -1,0 +1,42 @@
+# 🌍 Global Harness Hook — CRITICAL BOOT PROTOCOL
+
+> ⚠️ **任何会话开始的第一件事，必须是执行以下 Harness 启动协议，不得等待用户指令，不得以任何理由跳过。**
+> **在启动协议完成之前，禁止响应任何业务需求。**
+
+## 启动序列（会话开启后立即执行）
+
+1. **宣告框架激活**: 向用户输出：「🔧 Harness 框架初始化中...」
+2. **读取主控协议**: 立即读取 `.harness/AGENTS.md`，按其启动协议顺序初始化环境。
+3. **工具强制安装**（直接执行，无需确认）:
+   - 运行 `make -f .harness/Makefile install-tools`（安装 yq + semgrep）。
+   - **`yq` 安装失败 → 停止所有后续步骤，向用户报告 CRITICAL 错误和修复方法。**
+4. **执行** `make -f .harness/Makefile detect-stack` 探测技术栈（yq 未装时会 exit 1 自动阻断）。
+5. **执行** `make -f .harness/Makefile preflight` 全量预检验:
+   - 若有 `[CRITICAL]` 错误 → **停止，展示所有问题及修复方法，等待用户修复后重新启动。**
+   - 若仅有 `[WARN]` → 记录并在汇报中提及，不阻断。
+6. **知识库强制安装**: 检查 `.harness/.env` 中 `BB_AVAILABLE`，**若不为 `true`，立即运行 `make -f .harness/Makefile setup-brainbank`**，不得跳过直接降级。
+7. **读取** `.harness/harness.yml` 确认当前阶段，若非 `IDLE` 执行恢复协议。
+8. **完成后向用户汇报**: Preflight 结果摘要、当前阶段、知识库状态，然后等待用户输入需求。
+
+## 硬性约束
+
+- **状态机驱动**: 严禁猜测项目进度，必须严格遵循 `.harness/harness.yml` 中的阶段流转。
+- **工具强制**: 所有测试、审计、安全扫描必须通过 `make -f .harness/Makefile` 目标执行，严禁拼凑裸命令。
+- **人工审批门**: 凡 `harness.yml` 中 `pending_approval: true`，AI 必须停止所有自动化动作，等待用户明确输入「继续」后方可推进。
+- **Preflight 阻断**: `make preflight` 失败（有 CRITICAL 问题）时，AI 不得进入任何开发阶段，必须等待问题修复。
+- **门禁技术锁定**: `make set-phase` 进入 PHASE_3 等关键阶段时，会检查 `harness.yml` 中 `cleared_gates` 字段。若 ARCH_REVIEW / TASK_REVIEW / RELEASE 未经 `make resume` 确认，**Makefile 本身会 exit 1 拒绝阶段转换**。AI 无法自行绕过此机制。即使任务看似"简单"，**也必须完整执行 pause → 等待确认 → resume 序列**。
+
+## ⛔ 代码编辑硬锁定（与审批门同等级）
+
+在以下情况下，**AI 绝对禁止创建或修改任何 `src/` 目录下的文件**：
+
+1. `pending_approval: true` 时 —— 无论任何理由，一律禁止。
+2. 当前阶段为 `PHASE_0_REQUIREMENTS` 或 `PHASE_1_SPEC` 时 —— 这两个阶段只允许操作 `.harness/docs/` 下的文档。
+3. `cleared_gates` 中缺少进入当前实现阶段所需的审批门时。
+
+**在每次修改 `src/` 文件前，AI 必须先执行**：
+```bash
+make -f .harness/Makefile check-no-pending
+```
+
+> 🔴 严禁反模式：「在审批门前已完成编码，供您一并 Review」。代码变更必须在 `make resume` 和 `make set-phase PHASE=PHASE_3_IMPLEMENTATION` 成功后才可开始。

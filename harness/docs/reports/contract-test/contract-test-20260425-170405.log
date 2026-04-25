@@ -1,0 +1,14 @@
+[Harness] Running contract tests (API vs OpenAPI spec)...
+[Harness] Running: ./gradlew contractTest
+Configuration on demand is an incubating feature.
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :compileContractTestJava NO-SOURCE
+> Task :processContractTestResources NO-SOURCE
+> Task :contractTestClasses UP-TO-DATE
+> Task :contractTest NO-SOURCE
+
+BUILD SUCCESSFUL in 2s
+2 actionable tasks: 2 up-to-date
+[Harness] ❌ Contract tests BLOCKED — Gradle 跳过了契约测试或没有测试源

@@ -1,0 +1,37 @@
+[Harness] Running Semgrep semantic analysis...
+               
+               
+┌─────────────┐
+│ Scan Status │
+└─────────────┘
+  Scanning 1869 files tracked by git with 1059 Code rules:
+                                                                                
+  Language      Rules   Files          Origin      Rules                        
+ ─────────────────────────────        ───────────────────                       
+  <multilang>      48    1869          Community    1059                        
+  java            118    1685                                                   
+  bash              4      15                                                   
+  yaml             31       5                                                   
+  json              4       5                                                   
+  python          243       2                                                   
+  lua               1       1                                                   
+                                                                                
+                
+                
+┌──────────────┐
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 14 (14 blocking)
+ • Rules run: 444
+ • Targets scanned: 1869
+ • Parsed lines: ~99.9%
+ • Scan skipped: 
+   ◦ Files matching .semgrepignore patterns: 8
+ • Scan was limited to files tracked by git
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 444 rules on 1869 files: 14 findings.
+
+A new version of Semgrep is available. See https://semgrep.dev/docs/upgrading
+[Harness] Semgrep findings: 14
+[Harness] ❌ Semgrep 发现 14 个问题，请查看 JSON 报告: .harness/docs/reports/semgrep-20260425-165024.log.json

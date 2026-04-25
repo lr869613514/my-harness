@@ -1,0 +1,8 @@
+#!/bin/bash
+# Pre-commit hook: 自动运行静态分析
+echo "[Harness Pre-commit] Running static analysis..."
+make -f .harness/Makefile review
+if [ $? -ne 0 ]; then
+    echo "❌ 静态分析未通过，提交被阻止。请修复后重试。"
+    exit 1
+fi

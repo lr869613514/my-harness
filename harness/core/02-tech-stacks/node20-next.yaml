@@ -1,0 +1,22 @@
+stack_id: node20-next
+language: javascript
+language_version: "20"
+framework: next.js
+framework_version: "14.x"
+build_tool: npm
+dependency_files: ["package.json"]
+commands:
+  bdd_dry_run: "npx cucumber-js --dry-run"
+  bdd_run: "npx cucumber-js"
+  unit_test: "npm test -- --ci --coverage"
+  static_analysis: "npx eslint . --ext .ts,.tsx,.js,.jsx"
+  security_scan: "npm audit --audit-level=high"
+  coverage_check: "npm test -- --ci --coverage --coverageThreshold='{\"global\":{\"lines\":80}}'"
+  contract_test: "npm run test:contract"
+  resilience_test: "npm run test:resilience"
+  build: "npm run build"
+plugins:
+  eslint: true
+  jest: true
+  cucumber-js: "^10.0.0"
+  nyc: true

@@ -1,0 +1,24 @@
+stack_id: python3-fastapi
+language: python
+language_version: "3.11"
+framework: fastapi
+framework_version: "0.110.x"
+build_tool: pip
+dependency_files: ["requirements.txt", "pyproject.toml"]
+commands:
+  bdd_dry_run: "python -m pytest --collect-only -q features/"
+  bdd_run: "python -m pytest features/ -v"
+  unit_test: "python -m pytest tests/unit/ -v --tb=short"
+  static_analysis: "ruff check . && mypy ."
+  security_scan: "pip-audit --require-hashes -r requirements.txt"
+  coverage_check: "python -m pytest --cov=app --cov-fail-under=80 tests/"
+  contract_test: "python -m pytest tests/contract/ -v"
+  resilience_test: "python -m pytest tests/resilience/ -v"
+  build: "pip install -r requirements.txt"
+plugins:
+  pytest: true
+  pytest-bdd: true
+  ruff: true
+  mypy: true
+  pip-audit: true
+  pytest-cov: true

@@ -1,0 +1,139 @@
+#!/Users/lr/IdeaProjects/payadmin-harness/payadmin/.harness/.venv/bin/python3
+"""
+bb - BrainBank CLI wrapper
+Local semantic vector store powered by ChromaDB.
+
+Commands:
+  bb init   --db-path <path>
+  bb index  --path <dir> --collection <name>
+  bb query  "<query text>" --collection <name> [--limit N]
+"""
+
+import argparse
+import os
+import sys
+import glob
+
+def get_client(db_path):
+    try:
+        import chromadb
+    except ImportError:
+        print("❌ chromadb 未安装。请运行: make setup-brainbank", file=sys.stderr)
+        sys.exit(1)
+    return chromadb.PersistentClient(path=db_path)
+
+def cmd_init(args):
+    os.makedirs(args.db_path, exist_ok=True)
+    client = get_client(args.db_path)
+    print(f"✅ BrainBank 已初始化: {args.db_path}")
+
+def cmd_index(args):
+    client = get_client(args.db_path)
+    collection = client.get_or_create_collection(
+        name=args.collection,
+        metadata={"hnsw:space": "cosine"}
+    )
+
+    docs, ids, metas = [], [], []
+    extensions = ("*.md", "*.yaml", "*.yml", "*.txt")
+    files = []
+    for ext in extensions:
+        files.extend(glob.glob(os.path.join(args.path, "**", ext), recursive=True))
+
+    if not files:
+        print(f"⚠ 在 {args.path} 中未找到可索引文件 (md/yaml/yml/txt)")
+        return
+
+    for fpath in files:
+        try:
+            with open(fpath, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read().strip()
+            if not content:
+                continue
+            # 按 1500 字符分块，保持语义完整性
+            chunks = [content[i:i+1500] for i in range(0, len(content), 1500)]
+            for idx, chunk in enumerate(chunks):
+                doc_id = f"{fpath}::{idx}"
+                docs.append(chunk)
+                ids.append(doc_id)
+                metas.append({"source": fpath, "chunk": idx})
+        except Exception as e:
+            print(f"  ⚠ 跳过 {fpath}: {e}")
+
+    if docs:
+        # 批量 upsert，避免超出 ChromaDB 单次限制
+        batch_size = 100
+        for i in range(0, len(docs), batch_size):
+            collection.upsert(
+                documents=docs[i:i+batch_size],
+                ids=ids[i:i+batch_size],
+                metadatas=metas[i:i+batch_size],
+            )
+        print(f"✅ 已索引 {len(docs)} 个文本块 → collection: {args.collection}")
+    else:
+        print("⚠ 没有有效内容可索引")
+
+def cmd_query(args):
+    client = get_client(args.db_path)
+    try:
+        collection = client.get_collection(args.collection)
+    except Exception:
+        print(f"❌ collection '{args.collection}' 不存在，请先运行 make index-docs", file=sys.stderr)
+        sys.exit(1)
+
+    results = collection.query(
+        query_texts=[args.query],
+        n_results=min(args.limit, collection.count()),
+        include=["documents", "metadatas", "distances"]
+    )
+
+    hits = results["documents"][0]
+    metas = results["metadatas"][0]
+    distances = results["distances"][0]
+
+    if not hits:
+        print("🔍 未找到相关结果")
+        return
+
+    print(f"🔍 查询: \"{args.query}\" — 找到 {len(hits)} 条结果\n")
+    for rank, (doc, meta, dist) in enumerate(zip(hits, metas, distances), 1):
+        score = round(1 - dist, 3)  # cosine similarity
+        source = meta.get("source", "unknown")
+        print(f"[{rank}] 相关度: {score:.3f} | 来源: {source}")
+        print(f"    {doc[:300].replace(chr(10), ' ')}...")
+        print()
+
+def main():
+    parser = argparse.ArgumentParser(prog="bb", description="BrainBank 本地向量知识库")
+    parser.add_argument("--db-path", default=".harness/.brainbank", help="向量库存储路径")
+
+    sub = parser.add_subparsers(dest="command")
+
+    # init
+    sub.add_parser("init", help="初始化向量库")
+
+    # index
+    p_index = sub.add_parser("index", help="索引文档目录")
+    p_index.add_argument("--path", required=True, help="要索引的目录路径")
+    p_index.add_argument("--collection", required=True, help="collection 名称")
+
+    # query
+    p_query = sub.add_parser("query", help="语义检索")
+    p_query.add_argument("query", help="查询文本")
+    p_query.add_argument("--collection", required=True, help="collection 名称")
+    p_query.add_argument("--limit", type=int, default=5, help="返回结果数量")
+
+    args = parser.parse_args()
+    if not args.command:
+        parser.print_help()
+        sys.exit(0)
+
+    if args.command == "init":
+        cmd_init(args)
+    elif args.command == "index":
+        cmd_index(args)
+    elif args.command == "query":
+        cmd_query(args)
+
+if __name__ == "__main__":
+    main()

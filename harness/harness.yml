@@ -1,0 +1,11 @@
+# .harness/harness.yml
+current_phase: "PHASE_6_MEMORY"
+status: "READY"
+stack_id: "java8-spring2-gradle" # 由 detect-stack 自动写入
+completed_phases: []
+pending_approval: false
+approval_gate: ""
+cleared_gates:
+  - ARCH_REVIEW
+  - TASK_REVIEW
+suggested_version: "" # 由 make resume 追加，由 make set-phase PHASE=IDLE 清空

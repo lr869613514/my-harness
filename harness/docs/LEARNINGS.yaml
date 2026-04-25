@@ -1,0 +1,16 @@
+# LEARNINGS.yaml - 结构化经验库
+# 格式：每次 PHASE_6 沉淀时，AI 追加新条目
+# 检索方式：make -f .harness/Makefile search-docs QUERY="<关键词>"
+# 严禁用 cat 全量加载本文件，必须通过 bb query 或 @Codebase 检索
+
+learnings: []
+
+# 示例条目（首个真实踩坑后替换）：
+# - id: "L001"
+#   date: "2026-04-25"
+#   phase: "PHASE_3"
+#   pattern: "N+1 query in MyBatis"
+#   context: "在 OrderService.listOrders() 中，循环内部调用 getUserById() 导致 N+1 问题"
+#   solution: "使用 MyBatis <collection> 标签一次性关联查询，或引入 DataLoader 批处理"
+#   tags: ["performance", "mybatis", "n+1"]
+#   story_id: "US-001"
